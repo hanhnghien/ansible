@@ -1,2 +1,6 @@
 ---
 # handlers file for demo
+- name: Start Docker
+  systemd:
+    name: docker
+    state: started

@@ -1,2 +1,9 @@
 ---
 # tasks file for demo
+- name: Get Docker
+  shell: |
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sh get-docker.sh
+    usermod -aG docker $USER
+  notify:
+    - Start Docker
