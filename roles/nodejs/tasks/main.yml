@@ -12,9 +12,29 @@
     dest: /opt
     remote_src: true
 
-- name: Install NodeJS # Create a symbolic link
+- name: Install NodeJS
   become: true
   file:
-    src: /opt/{{ node }}/bin/node
-    dest: /usr/local/bin/node
+    src: /opt/{{ node }}/bin/{{ item }}
+    dest: /usr/bin/{{ item }}
     state: link
+  loop:
+    - node
+    - npm
+    - npx
+
+- name: Install PM2
+  become: true
+  shell: npm install pm2@latest -g
+
+- name: Create PM2 Symbolic Link
+  become: true
+  file:
+    src: /opt/{{ node }}/bin/{{ item }}
+    dest: /usr/bin/{{ item }}
+    state: link
+  loop:
+    - pm2
+    - pm2-dev
+    - pm2-docker
+    - pm2-runtime
