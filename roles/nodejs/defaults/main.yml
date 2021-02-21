@@ -1,0 +1,5 @@
+---
+# defaults file for nodejs
+version: v14.15.5
+node: node-{{ version }}-linux-x64
+tmp: /tmp/nodejs.tar.xz
