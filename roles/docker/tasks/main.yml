@@ -1,0 +1,35 @@
+---
+# tasks file for docker
+- name: Get Docker
+  get_url:
+    url: https://get.docker.com
+    dest: '{{ tmp }}'
+
+- name: Install Docker
+  become: true
+  shell: |
+    sh '{{ tmp }}'
+    usermod -aG docker $USER
+  notify:
+    - Start Docker
+
+- name: Install Docker Compose
+  become: true
+  get_url:
+    url: '{{ github }}/compose/releases/download/{{ compose_version }}/docker-compose-{{ kernel }}'
+    dest: /usr/bin/docker-compose
+
+- name: Install Docker Machine
+  become: true
+  get_url:
+    url: '{{ github }}/machine/releases/download/{{ machine_version }}/docker-machine-{{ kernel }}'
+    dest: /usr/bin/docker-machine
+
+- name: Apply executable
+  become: true
+  file:
+    path: /usr/bin/{{ item }}
+    mode: +x
+  loop:
+    - docker-compose
+    - docker-machine

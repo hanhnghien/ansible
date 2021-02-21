@@ -1,6 +1,7 @@
 ---
-# handlers file for demo
+# handlers file for docker
 - name: Start Docker
+  become: true
   systemd:
     name: docker
     state: started

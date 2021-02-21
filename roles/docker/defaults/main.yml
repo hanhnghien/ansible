@@ -1,0 +1,7 @@
+---
+# defaults file for docker
+tmp: /tmp/get-docker.sh
+kernel: Linux-x86_64
+github: https://github.com/docker
+compose_version: 1.28.4
+machine_version: v0.16.0
