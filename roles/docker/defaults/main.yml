@@ -1,7 +1,10 @@
 ---
 # defaults file for docker
-tmp: /tmp/get-docker.sh
-kernel: Linux-x86_64
-github: https://github.com/docker
-compose_version: 1.28.4
-machine_version: v0.16.0
+docker_version: 20.10.5
+compose_version: 1.28.5
+machine_version: 0.16.2
+hardware: x86_64
+kernel: Linux-{{ hardware }}
+docker_download: https://download.docker.com/linux/static/stable/{{ hardware }}/docker-{{ docker_version }}.tgz
+compose_download: https://github.com/docker/compose/releases/download/{{ compose_version }}/docker-compose-{{ kernel }}
+machine_download: https://github.com/docker/machine/releases/download/v{{ machine_version }}/docker-machine-{{ kernel }}

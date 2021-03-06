@@ -1,35 +1,48 @@
 ---
 # tasks file for docker
-- name: Get Docker
-  get_url:
-    url: https://get.docker.com
-    dest: '{{ tmp }}'
+- name: Get Docker Engine
+  # become: true
+  ansible.builtin.unarchive:
+    src: '{{ docker_download }}'
+    dest: /opt/
+    remote_src: true
 
-- name: Install Docker
-  become: true
-  shell: |
-    sh '{{ tmp }}'
-    usermod -aG docker $USER
-  notify:
-    - Start Docker
-
-- name: Install Docker Compose
-  become: true
-  get_url:
-    url: '{{ github }}/compose/releases/download/{{ compose_version }}/docker-compose-{{ kernel }}'
-    dest: /usr/bin/docker-compose
-
-- name: Install Docker Machine
-  become: true
-  get_url:
-    url: '{{ github }}/machine/releases/download/{{ machine_version }}/docker-machine-{{ kernel }}'
-    dest: /usr/bin/docker-machine
-
-- name: Apply executable
-  become: true
-  file:
-    path: /usr/bin/{{ item }}
+- name: Get Compose N Machine
+  # become: true
+  ansible.builtin.get_url:
+    url: '{{ item.url }}'
+    dest: '{{ item.dest }}'
     mode: +x
   loop:
-    - docker-compose
-    - docker-machine
+    - { url: '{{ compose_download }}', dest: /opt/docker/docker-compose }
+    - { url: '{{ machine_download }}', dest: /opt/docker/docker-machine }
+
+- name: Copy Unit Files
+  # become: true
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: /etc/systemd/system/
+  loop:
+    - docker.service
+    - docker.socket
+  notify:
+    - Add Docker Group
+    - Enable Docker Service
+
+- name: Get Binary Files
+  # become: true
+  ansible.builtin.find:
+    paths: /opt/docker/
+    file_type: file
+  register: binaries
+
+- name: Create Symbolic Links
+  # become: true
+  ansible.builtin.file:
+    src: '{{ item.path }}'
+    dest: /usr/bin/{{ item.path | basename }}
+    state: link
+  loop:
+    '{{ binaries.files }}'
+  notify:
+    - Start Docker Service

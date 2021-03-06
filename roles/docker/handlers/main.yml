@@ -1,7 +1,19 @@
 ---
 # handlers file for docker
-- name: Start Docker
-  become: true
-  systemd:
+- name: Add Docker Group
+  # become: true
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Enable Docker Service
+  # become: true
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+
+- name: Start Docker Service
+  # become: true
+  ansible.builtin.systemd:
     name: docker
     state: started
